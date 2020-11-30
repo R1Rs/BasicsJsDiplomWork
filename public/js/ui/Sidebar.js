@@ -34,18 +34,19 @@ class Sidebar {
   static initAuthLinks() {
     let allMenuItem = document.querySelectorAll(".menu-item");
     allMenuItem.forEach(el => el.addEventListener("click", findMenu))
-    
-    function findMenu() {
-    allMenuItem.forEach(el => {
-      if (el.classList.contains("menu-item_register")) {
+    function findMenu(el) {
+      if (el.target.closest(".menu-item_register")) {
         let register = App.getModal("register").element;
-        console.log(register);
-        new Modal(register).open;
-        console.log("fadf")
+        new Modal(register).open();
+      } else if (el.target.closest(".menu-item_login")) {
+        let login = App.getModal("login").element;
+        new Modal(login).open();
+      } else if (el.target.closest(".menu-item_logout")) {
+        let responseLogout = User.logout();
+        if (responseLogout.success == "true") {
+          App.setState("init");
+        }
       }
-    })}
-    // let mod = App.getModal();
-    // Modal.open(mod)
+    }
   }
-
 }

@@ -44,15 +44,20 @@ class User {
   static fetch( data, callback = f => f ) {
     let options = {
       url: this.url+"/current",
-      data,
+      data: this.current(),
       responseType: "json",
       method: "GET"
     };
     let response = createRequest(options);
+    console.log("1")
+    console.log(response)
+
     if (response.success == "true") {
       this.setCurrent(response.user);
+      console.log(response)
     } else {
       this.unsetCurrent();
+      console.log(response);
     }
   }
 
@@ -112,6 +117,7 @@ class User {
     let response = createRequest(options);
     if (response.success == "true") {
       this.unsetCurrent();
+      return response;
     }
   }
 }
