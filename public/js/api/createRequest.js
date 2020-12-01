@@ -3,6 +3,7 @@
  * на сервер.
  * */
 const createRequest = (options = {}) => {
+
     let url = options.url;
     let headers = options.headers;
     let data = options.data;
@@ -13,27 +14,27 @@ const createRequest = (options = {}) => {
     xhr.responseType = responseType;
 
     function listener () {
-        xhr.send();
+        
         xhr.addEventListener("readystatechange", () => {
-        console.log(xhr.readyState, xhr.status);
-        if (xhr.readyState == 4 && xhr.status == 200) {
+
+            if (xhr.readyState == 4 && xhr.status == 200) {
             let response = xhr.response;
-            console.log(response.success);
             callback(response)
         } else if (xhr.readyState == 4 && xhr.status != 200) {
             let err = xhr.status;
-            console.log(err);
             callback(err);
         } 
     })
     }
+
     if (method == "GET" && data) {
         xhr.open("GET", `${url}?mail=${data.mail}&password=${data.password}`);
-        // xhr.send();
+        xhr.send();
         listener();
 
-    } else if (method == "GET") {
+    } else if (method == "GET") { 
         xhr.open("GET", url);
+        xhr.send();
         listener();
 
     } else {
@@ -41,14 +42,18 @@ const createRequest = (options = {}) => {
         formData.append("mail", `${data.mail}`);
         formData.append("password", `${data.password}`);
         xhr.open(`${method}`, `${url}`);
-        // xhr.send(formData);
+        xhr.send(formData);
         listener() ;
-
     }
     function callback (a) {
-        console.log(a);
+        if (a = "undefined") {
+             return "опять 25";
+        }
+        console.log(a); 
        return a;
     }
-};
+    return callback();
+
+}; 
 
 
