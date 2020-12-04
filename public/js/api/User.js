@@ -1,3 +1,4 @@
+
 /**
  * Класс User управляет авторизацией, выходом и
  * регистрацией пользователя из приложения
@@ -11,10 +12,7 @@ class User {
   static url = "/user";
 
   static setCurrent(user) {
-    localStorage.user = {
-      id: user.id,
-      name: user.name
-    }
+    localStorage.user  = JSON.stringify(user);
   }
 
   /**
@@ -46,19 +44,16 @@ class User {
       url: this.url+"/current",
       data: this.current(),
       responseType: "json",
-      method: "GET"
+      method: "GET",
+      callback: (err, response) => {
+        if (response.success == true) {
+          this.setCurrent(response.user);
+        } else {
+          this.unsetCurrent();
+        }
+      }
     };
-    let response = createRequest(options);
-    console.log("1")
-    console.log(response)
-
-    if (response.success == "true") {
-      this.setCurrent(response.user);
-      console.log(response)
-    } else {
-      this.unsetCurrent();
-      console.log(response);
-    }
+    createRequest(options);
   }
 
   /**
@@ -93,15 +88,19 @@ class User {
       url: this.url+"/register",
       data,
       responseType: "json",
-      method: "POST"
+      method: "POST",
+      callback: (err, response) => {
+        if (response.success == true) {
+          this.setCurrent(response.user);
+          callback(null, response)
+        } else {
+          console.log(response.error); 
+          callback(response.error, null);
+        }
+      }
     };
-    let response = createRequest(options);
-    if (response.success == "true") {
-      this.setCurrent(response.user);
-    } else {
-      alert (response.error); 
-    }
-  }
+    createRequest(options);
+ }
 
   /**
    * Производит выход из приложения. После успешного
