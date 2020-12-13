@@ -31,10 +31,17 @@ class App {
    * состояние 'init'
    * */
   static initUser() {
-    let userStatus = User.fetch();
-    // User.fetch(User.current(), () =>
-    //   this.setState( User.current() ? 'user-logged' : 'init' )
-    // );
+    let data = User.current();
+    let callback = (err, response) => {
+      if (response.success == true) {
+        this.setState("user-logged");
+      } else if (response.success == false) {
+        this.setState("init");
+      } else {
+        console.log(err);
+      }
+    }
+    User.fetch(data, callback);
   }
 
   /**

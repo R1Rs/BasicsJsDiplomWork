@@ -42,10 +42,14 @@ class Sidebar {
         let login = App.getModal("login").element;
         new Modal(login).open();
       } else if (el.target.closest(".menu-item_logout")) {
-        let responseLogout = User.logout();
-        if (responseLogout.success == "true") {
-          App.setState("init");
-        }
+        let user = User.current();
+        let responseLogout = User.logout(user, (err, response) => {
+          if (response.success == true) {
+            App.setState("init");
+          } else if (err) {
+            console.log(err)
+          }
+        } );
       }
     }
   }

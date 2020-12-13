@@ -14,6 +14,7 @@ const createRequest = (options = {}) => {
 
     let xhr = new XMLHttpRequest();
     xhr.responseType = responseType;
+    xhr.withCredentials = true;
     xhr.addEventListener("readystatechange", () => {
         if (xhr.readyState == 4 && xhr.status == 200) {
         let response = xhr.response;
@@ -25,16 +26,21 @@ const createRequest = (options = {}) => {
 }) 
 
     if (method == "GET" && data) {
-        xhr.open("GET", `${url}?mail=${data.email}&password=${data.password}`);
+        let fromData = "";
+        for (let key in data) {
+            fromData +=  `${key}=${data[key]}&`
+        }
+        let dataForOpen = fromData.slice(0, -1);
+        xhr.open(method, url + "?" + dataForOpen);
         xhr.send();
-    } else if (method == "GET") {
+    } else if (method == "GET") { 
         xhr.open("GET", url);
         xhr.send();
     } else {
         let formData = new FormData;
-        formData.append("name", `${data.name}`);
-        formData.append("mail", `${data.email}`);
-        formData.append("password", `${data.password}`);
+        for (let key in data) {
+            formData.append(key, data[key]);
+        }
         xhr.open(`${method}`, `${url}`);
         xhr.send(formData);
     }

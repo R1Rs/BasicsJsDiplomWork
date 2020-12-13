@@ -13,9 +13,10 @@ class RegisterForm extends AsyncForm {
 
   onSubmit( options ) {
     let element = this.element;
+    User.register(options, callback);
+
     function callback(err, response) {
       if (response.success == true) {
-        console.log("регистрация успешна");
         let elementForClose = element.closest("#modal-register");
 
         App.setState("user-logged");
@@ -24,6 +25,5 @@ class RegisterForm extends AsyncForm {
         console.log("ошибка при регистрации: " + err);
       }
     }
-    User.register(options, callback);
   }
 }

@@ -37,7 +37,6 @@ class Modal {
    * Закрывает текущее окно (Modal.close())
    * */
   onClose(  ) {
-    console.log(this.element)
     this.close();
     this.unregisterEvents();
   }

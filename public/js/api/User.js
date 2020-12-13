@@ -29,7 +29,7 @@ class User {
    * */
   static current() {
     if (localStorage.user) {
-      return localStorage.user;
+      return JSON.parse(localStorage.user);
     } else {
       return undefined;
     }
@@ -42,16 +42,17 @@ class User {
   static fetch( data, callback = f => f ) {
     let options = {
       url: this.url+"/current",
-      data: this.current(),
+      // data: this.current(),
+      data,
       responseType: "json",
       method: "GET",
       callback: (err, response) => {
-        if (response.success == true) {
-          this.setCurrent(response.user);
+        if (response) {
+          callback(null, response);
         } else {
-          this.unsetCurrent();
+          callback(err, null);
         }
-      }
+      } 
     };
     createRequest(options);
   }
@@ -67,14 +68,18 @@ class User {
       url: this.url+"/login",
       data,
       responseType: "json",
-      method: "POST"
+      method: "POST",
+      callback: (err, response) => {
+        if (response.success == true) {
+          this.setCurrent(response.user);
+          callback(null, response);
+        } else {
+          console.log("ошибка при авторизации: " + response.error);
+          callback(response.error, null);
+        }
+      }
     };
-    let response = createRequest(options);
-    if (response.success == "true") {
-      this.setCurrent(response.user);
-    } else if (response.success == "false") {
-      alert (response.error);
-    }
+    createRequest(options);
   }
 
   /**
@@ -92,9 +97,8 @@ class User {
       callback: (err, response) => {
         if (response.success == true) {
           this.setCurrent(response.user);
-          callback(null, response)
+          callback(null, response);
         } else {
-          console.log(response.error); 
           callback(response.error, null);
         }
       }
@@ -111,12 +115,17 @@ class User {
       url: this.url+"/logout",
       data,
       responseType: "json",
-      method: "POST"
+      method: "POST",
+      callback: (err, response) => {
+        if (response.success == true) {
+          this.unsetCurrent();
+          callback(null, response)
+        } else {
+          callback(err, null);
+          console.log(err, null);
+        }
+      }
     };
-    let response = createRequest(options);
-    if (response.success == "true") {
-      this.unsetCurrent();
-      return response;
-    }
-  }
+    createRequest(options);
+   }
 }

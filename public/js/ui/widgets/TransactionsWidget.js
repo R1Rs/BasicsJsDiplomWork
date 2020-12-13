@@ -11,7 +11,12 @@ class TransactionsWidget {
    * необходимо выкинуть ошибку.
    * */
   constructor( element ) {
-
+    if (element) {
+      this.element = element;
+    } else {
+      throw new Error("не передан элемент");
+    }
+    this.registerEvents();
   }
   /**
    * Регистрирует обработчики нажатия на
@@ -20,6 +25,13 @@ class TransactionsWidget {
    * экземпляра окна
    * */
   registerEvents() {
-
+    this.element.addEventListener("click", (triger) => {
+      if (triger.target.firstElementChild.classList.contains("fa-thumbs-o-up")) {
+        App.getModal("newIncome").open();
+      } else if (triger.target.firstElementChild.classList.contains("fa-thumbs-o-down")) {
+        App.getModal("newExpense").open();
+      }
+    }
+    )
   }
 }
